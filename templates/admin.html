@@ -5,23 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Live Lyrics</title>
     <style>
+        :root {
+            --background-light: #f0f0f0;
+            --text-light: #000;
+            --background-dark: #1e1e1e;
+            --text-dark: #fff;
+        }
+
         body {
             font-family: Calibri, sans-serif;
             text-align: center;
+            background-color: var(--background-light);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
         }
+
         button {
             margin: 5px;
             padding: 10px 20px;
             font-size: 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0078d4;
+            color: #fff;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+        }
+
+        iframe {
+            width: 80%;
+            height: 500px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+
+        .dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+        }
+
+        .dark-mode button {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .dark-mode button:hover {
+            background-color: #555;
+        }
+
+        .dark-mode iframe {
+            border-color: #444;
         }
     </style>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 </head>
 <body>
     <h1>Admin Interface</h1>
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    <br><br>
     <select id="song-selector">
         {% for song in songs %}
-            <option value="{{ song }}">{{ song }}</option>
+            <option value="{{ song }}">{{ song|replace('.txt', '') }}</option>
         {% endfor %}
     </select>
     <button onclick="loadSong()">Load Song</button>
@@ -31,6 +84,10 @@
     <br><br>
     <input type="text" id="custom-message" placeholder="Custom message">
     <button onclick="sendMessage()">Send Message</button>
+    <br><br>
+    <!-- Embedded Client Page -->
+    <h2>Client Page Preview</h2>
+    <iframe src="/" title="Client Page"></iframe>
     <script>
         const socket = io();
 
@@ -58,6 +115,10 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ message }),
             });
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
         }
     </script>
 </body>
