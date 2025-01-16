@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Lyrics</title>
+    <style>
+        body {
+            font-family: Calibri, sans-serif;
+            text-align: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.dark-mode {
+            background-color: #121212;
+            color: white;
+        }
+        #current-lyric {
+            font-size: 3rem;
+        }
+        #next-lyric {
+            font-size: 1.5rem;
+            color: gray;
+        }
+        #dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        body.dark-mode #dark-mode-toggle {
+            background-color: #333;
+            color: white;
+        }
+    </style>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h1 id="current-lyric"></h1>
+    <p id="next-lyric"></p>
+    <div id="dark-mode-toggle">Toggle Dark Mode</div>
+
+    <script>
+        const socket = io();
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        socket.on("update_lyrics", (data) => {
+            document.getElementById("current-lyric").innerText = data.current;
+            document.getElementById("next-lyric").innerText = data.next;
+        });
+
+        socket.on("custom_message", (data) => {
+            alert(data.message);
+        });
+
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Live Lyrics</title>
+    <style>
+        body {
+            font-family: Calibri, sans-serif;
+            text-align: center;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+        }
+    </style>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Admin Interface</h1>
+    <select id="song-selector">
+        {% for song in songs %}
+            <option value="{{ song }}">{{ song }}</option>
+        {% endfor %}
+    </select>
+    <button onclick="loadSong()">Load Song</button>
+    <br><br>
+    <button onclick="sendPrevious()">Previous Lyric</button>
+    <button onclick="sendNext()">Next Lyric</button>
+    <br><br>
+    <input type="text" id="custom-message" placeholder="Custom message">
+    <button onclick="sendMessage()">Send Message</button>
+    <script>
+        const socket = io();
+
+        function loadSong() {
+            const songName = document.getElementById("song-selector").value;
+            fetch("/load_song", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ song_name: songName }),
+            });
+        }
+
+        function sendNext() {
+            fetch("/next_lyric", { method: "POST" });
+        }
+
+        function sendPrevious() {
+            fetch("/previous_lyric", { method: "POST" });
+        }
+
+        function sendMessage() {
+            const message = document.getElementById("custom-message").value;
+            fetch("/custom_message", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message }),
+            });
+        }
+    </script>
+</body>
+</html>
