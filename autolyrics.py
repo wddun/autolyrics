@@ -5,7 +5,7 @@ from flask_socketio import SocketIO, emit
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-SONGS_FOLDER = "/songs"
+SONGS_FOLDER = "songs"
 current_lyrics = {
     "song_name": None,
     "lyrics": [],
