@@ -362,22 +362,39 @@
         const socket = io();
         let currentLyrics = [];
         let currentIndex = 0;
+        const roomName = "{{ room_name }}";
+
+        // Join room on connection
+        socket.on('connect', () => {
+            socket.emit('join', { room_name: roomName });
+        });
 
         function loadSong() {
             const songName = document.getElementById("song-selector").value;
             fetch("/load_song", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ song_name: songName }),
+                body: JSON.stringify({ 
+                    song_name: songName,
+                    room_name: roomName
+                }),
             });
         }
 
         function sendNext() {
-            fetch("/next_lyric", { method: "POST" });
+            fetch("/next_lyric", { 
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ room_name: roomName })
+            });
         }
 
         function sendPrevious() {
-            fetch("/previous_lyric", { method: "POST" });
+            fetch("/previous_lyric", { 
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ room_name: roomName })
+            });
         }
 
         function sendMessage() {
@@ -385,7 +402,10 @@
             fetch("/custom_message", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message }),
+                body: JSON.stringify({ 
+                    message,
+                    room_name: roomName
+                }),
             });
         }
 
@@ -409,7 +429,8 @@
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ 
                             song_name: document.getElementById("song-selector").value,
-                            start_index: index 
+                            start_index: index,
+                            room_name: roomName
                         }),
                     });
                 };
