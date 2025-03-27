@@ -41,13 +41,12 @@ def load_song():
 
     current_lyrics["song_name"] = song_name
     current_lyrics["lyrics"] = [line.strip() for line in lyrics]
-    current_lyrics["index"] = 0
+    
+    # Allow starting from a specific index if provided
+    start_index = request.json.get("start_index", 0)
+    current_lyrics["index"] = min(start_index, len(current_lyrics["lyrics"]) - 1)
 
-    socketio.emit("update_lyrics", {
-        "current": current_lyrics["lyrics"][0] if current_lyrics["lyrics"] else "",
-        "next": current_lyrics["lyrics"][1] if len(current_lyrics["lyrics"]) > 1 else "",
-    })
-
+    send_lyrics_update()
     return jsonify({"message": "Song loaded successfully"})
 
 
@@ -79,12 +78,15 @@ def custom_message():
 
 def send_lyrics_update():
     """Emit current and next lyrics to clients."""
-    socketio.emit("update_lyrics", {
+    update_data = {
         "current": current_lyrics["lyrics"][current_lyrics["index"]],
         "next": current_lyrics["lyrics"][current_lyrics["index"] + 1]
         if current_lyrics["index"] + 1 < len(current_lyrics["lyrics"])
         else "",
-    })
+        "all_lyrics": current_lyrics["lyrics"],
+        "current_index": current_lyrics["index"]
+    }
+    socketio.emit("update_lyrics", update_data)
 
 
 if __name__ == "__main__":
